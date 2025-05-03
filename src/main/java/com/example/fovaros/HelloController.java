@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -16,6 +17,8 @@ import java.util.TreeMap;
 public class HelloController {
 
     @FXML public ListView lsLista;
+    @FXML public TextField fovaroslakossagTF;
+    @FXML public TextField fovarosTF;
 
     public class Varos{
         public String orszag;
@@ -29,7 +32,7 @@ public class HelloController {
             rovid = s[1];
             orszglakossag = Integer.parseInt(s[2]);
             fovaros = s[3];
-            orszglakossag = Integer.parseInt(s[4]);
+            fovaroslakossag = Integer.parseInt(s[4]);
         }
     }
     public ArrayList<Varos> orszag_varosok = new ArrayList<>();
@@ -40,6 +43,7 @@ public class HelloController {
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV fájlok", "*.csv"));
     }
     @FXML private void onMegnyitasClick() {
+        lsLista.getItems().clear();
         File fbe = fc.showOpenDialog(lsLista.getScene().getWindow());
         if (fbe != null) {
             orszag_varosok.clear();
@@ -47,6 +51,7 @@ public class HelloController {
             betolt(fbe);
             for (Varos var : orszag_varosok) lsLista.getItems().add(String.format("%s (%,d fő): %s", var.orszag, var.orszglakossag, var.rovid));
             lsLista.getSelectionModel().select(0);
+            OnList();
         }
     }
     public void betolt(File fajl){
@@ -66,16 +71,22 @@ public class HelloController {
         }
     }
 
-    @FXML private void onKilepesClick() {
-        // Alkalmazás bezárása
+    @FXML private void OnList(){
+        int i = lsLista.getSelectionModel().getSelectedIndex();
+        //System.out.println(orszag_varosok.get(i).fovaros);
+        fovaroslakossagTF.setText(String.format("%,d fő", orszag_varosok.get(i).fovaroslakossag));
+        fovarosTF.setText(String.valueOf(orszag_varosok.get(i).fovaros));
+    }
+
+    @FXML private void OnBezar(){
         Platform.exit();
     }
+
     @FXML private void onNevjegyClick() {
-        // Névjegy megjelenítése információs ablakban
         Alert info = new Alert(Alert.AlertType.INFORMATION);
         info.setTitle("Névjegy");
         info.setHeaderText(null);
-        info.setContentText("Névnap v1.0\n(C) Kandó");
+        info.setContentText("Varosok v1.0\n(C) Kandó");
         info.showAndWait();
     }
 }
